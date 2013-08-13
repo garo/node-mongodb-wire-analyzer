@@ -44,7 +44,7 @@ pcap_session.on('packet', function (raw_packet) {
   var packet = pcap.decode.packet(raw_packet);
   if (packet.link && packet.link.ip && packet.link.ip.version == 4 && packet.link.ip.protocol_name == 'TCP') {
     if (packet.link.ip.tcp.data) {
-      parseMongoDbData(packet.link.ip.tcp.data);
+        parseMongoDbData(packet.link.ip.tcp.data);
     }
 
   }
@@ -68,6 +68,11 @@ pcap_session.on('packet', function (raw_packet) {
  */
 function parseMongoDbData(buffer) {
   var offset = 0;
+
+  if (buffer.length < 16) {
+    return;
+  }
+
   var msgHeader = readMsgHeader(buffer);
 
   switch (msgHeader.opCode) {
