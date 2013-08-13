@@ -50,7 +50,9 @@ pcap_session.on('packet', function (raw_packet) {
 /**
  * Parses mongodb request from the buffer containing TCP payload.
  *
- * The buffer doesn't have to be a complete TCP stream, but the payload from the first packet usually is enough
+ * The buffer doesn't have to be a complete TCP stream, but the payload from the first packet usually is enough.
+ * This implementation does not follow the tcp flow, so it simply tries to drop the subsequental packets
+ * by detecting that the opcode field is garbage.
  *
  * This function has a few internal functions which read parts of the Buffer. They all rely heavily on the 'offset'
  * variable, which stores the state and position of the first unread byte in the Buffer.
@@ -85,7 +87,10 @@ function parseMongoDbData(buffer) {
       break;
 
     default:
-      argv.stdout && console.log("Unknown opCode", msgHeader.opCode);
+        // Unknown opcode. This usually means that this tcp packet is not the first packet of a tcp flow,
+        // but a subsequental. This naive implementation just tries to drop these by noticing that the
+        // opCode part isn't valid.
+      break;
   }
 
   function readMsgHeader() {
