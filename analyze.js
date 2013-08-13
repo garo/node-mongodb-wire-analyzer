@@ -24,6 +24,10 @@ function help() {
   process.stderr.write("\t--bson\n");
   process.stderr.write("\t\tDecode BSON for stdout output. Default is false.\n");
   process.stderr.write("\n");
+  process.stderr.write("\t--filter-out <filter string>\n");
+  process.stderr.write("\t\tFilter colletions out if they contain this string\n");
+  process.stderr.write("\n");
+
   process.stderr.write("Issues, feedback etc at https://github.com/garo/node-mongodb-wire-analyzer");
   process.stderr.write("\n");
 
@@ -78,20 +82,26 @@ function parseMongoDbData(buffer) {
   switch (msgHeader.opCode) {
     case 2001: // OP_UPDATE
       var updateQuery = readUpdateQuery();
-      argv.stdout && console.log("updateQuery", updateQuery);
-      statsd && statsd.increment('update.' + updateQuery.fullCollectionName);
+      if (argv['filter-out'] && updateQuery.fullCollectionName.indexOf(argv['filter-out']) === -1) {
+        argv.stdout && console.log("updateQuery", updateQuery);
+        statsd && statsd.increment('update.' + updateQuery.fullCollectionName);
+      }
 
       break;
     case 2002: // OP_INSERT
       var insertQuery = readInsertQuery();
-      argv.stdout && console.log("insertQuery", insertQuery);
-      statsd && statsd.increment('insert.' + insertQuery.fullCollectionName);
+      if (argv['filter-out'] && insertQuery.fullCollectionName.indexOf(argv['filter-out']) === -1) {
+        statsd && statsd.increment('insert.' + insertQuery.fullCollectionName);
+        argv.stdout && console.log("insertQuery", insertQuery);
+      }
       break;
 
     case 2004: // OP_QUERY
       var opQuery = readOpQuery();
-      statsd && statsd.increment('query.' + opQuery.fullCollectionName);
-      argv.stdout && console.log("opQuery:", opQuery);
+      if (argv['filter-out'] && opQuery.fullCollectionName.indexOf(argv['filter-out']) === -1) {
+        statsd && statsd.increment('query.' + opQuery.fullCollectionName);
+        argv.stdout && console.log("opQuery:", opQuery);
+      }
       break;
 
     default:
