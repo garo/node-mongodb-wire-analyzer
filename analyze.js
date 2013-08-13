@@ -14,6 +14,7 @@ function help() {
   process.stderr.write("\n");
   process.stderr.write("\t--statsd <host>\n");
   process.stderr.write("\t\tSends update/insert/query statistics to statsd/graphite server.\n");
+  process.stderr.write("\n");
   process.stderr.write("\t--statsd-port <port>\n");
   process.stderr.write("\t\tSets statsd port. default port is 8125.\n");
   process.stderr.write("\n");
