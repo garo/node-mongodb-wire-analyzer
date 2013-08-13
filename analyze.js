@@ -21,6 +21,9 @@ function help() {
   process.stderr.write("\t--statsd-prefix <prefix name>\n");
   process.stderr.write("\t\tPrefix for statsd. Default prefix is \"mongodb.wirestats\"\n");
   process.stderr.write("\n");
+  process.stderr.write("\t--bson\n");
+  process.stderr.write("\t\tDecode BSON for stdout output. Default is false.\n");
+  process.stderr.write("\n");
   process.stderr.write("Issues, feedback etc at https://github.com/garo/node-mongodb-wire-analyzer");
   process.stderr.write("\n");
 
@@ -128,8 +131,10 @@ function parseMongoDbData(buffer) {
 
     updateQuery.fullCollectionName = readCString(buffer);
     updateQuery.flags = readuint32(offset);
-    updateQuery.selector = readBSON();
-    updateQuery.update = readBSON();
+    if (argv.bson) {
+      updateQuery.selector = readBSON();
+      updateQuery.update = readBSON();
+    }
 
 
     return updateQuery;
@@ -148,10 +153,12 @@ function parseMongoDbData(buffer) {
     var insertQuery = {};
     insertQuery.flags = readuint32(offset);
     insertQuery.fullCollectionName = readCString(buffer);
-    insertQuery.documents = [];
-    do {
-      insertQuery.documents.push(readBSON());
-    } while (offset < buffer.length);
+    if (argv.bson) {
+      insertQuery.documents = [];
+      do {
+        insertQuery.documents.push(readBSON());
+      } while (offset < buffer.length);
+    }
 
     return insertQuery;
   }
@@ -174,7 +181,9 @@ function parseMongoDbData(buffer) {
     opQuery.fullCollectionName = readCString();
     opQuery.numberToSkip = readuint32(offset);
     opQuery.numberToReturn = readuint32(offset);
-    opQuery.query = readBSON();
+    if (argv.bson) {
+      opQuery.query = readBSON();
+    }
 
     return opQuery;
   }
