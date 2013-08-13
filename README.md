@@ -6,6 +6,8 @@ MongoDB wire sniffer with optional statsd/graphite output for statistics
 This program used libpcap to intercept all mongodb commands, parses the mongodb binary wire protocol
 and outputs the queries to stdout and/or sends statistic counters to statsd/graphite.
 
+Remember to install required npm packages by commanding "npm install" before running the analyzer.
+
 Usage: node ./analyze.js --interface <interface name from ifconfig>
 Optional arguments:
 
