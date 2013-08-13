@@ -1,0 +1,16 @@
+{
+  "name": "node-mongodb-wire-analyzer",
+  "description": "Analyzes mongodb tcp wire protocol with libpcap",
+  "version": "0.0.1",
+  "repository": {
+    "type": "git",
+    "url": "git://github.com/garo/node-mongodb-wire-analyzer.git"
+  },
+  "dependencies": {
+    "bson": "0.2.2",
+    "pcap": "0.4.1",
+    "statsd-client" : "0.0.15",
+    "optimist" : "0.6.0"
+  },
+  "author": "Juho MŠkinen <juho.makinen@gmail.com>"
+}
