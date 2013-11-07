@@ -48,7 +48,9 @@ pcap_session.on('packet', function (raw_packet) {
   var packet = pcap.decode.packet(raw_packet);
   if (packet.link && packet.link.ip && packet.link.ip.version == 4 && packet.link.ip.protocol_name == 'TCP') {
     if (packet.link.ip.tcp.data) {
+      try {
         parseMongoDbData(packet.link.ip.tcp.data);
+      } catch (err) {}
     }
 
   }
